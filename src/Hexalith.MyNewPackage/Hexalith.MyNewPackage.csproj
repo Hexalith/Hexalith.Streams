@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(DefaultTargetFramework)</TargetFramework>
+    <PackageId>Hexalith.MyNewPackage</PackageId>
+    <Description>Hexalith MyNewPackage utilities and helpers</Description>
+    <PackageProjectUrl>https://github.com/Hexalith/Hexalith.MyNewPackage</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Hexalith/Hexalith.MyNewPackage</RepositoryUrl>
+    <PackageTags>hexalith;MyNewPackage;</PackageTags>
+  </PropertyGroup>
+</Project>
