@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Hexalith.Streams.Abstractions.Stores;
+namespace Hexalith.Streams.Stores;
 
 using System;
 using System.Runtime.Serialization;
@@ -37,7 +37,7 @@ public class DuplicateIdempotencyIdException<TData> : Exception
     /// Initializes a new instance of the <see cref="DuplicateIdempotencyIdException{TData}"/> class.
     /// </summary>
     /// <param name="duplicateData">The duplicate data.</param>
-    public DuplicateIdempotencyIdException(IStreamObject<TData> duplicateData) => DuplicateData = duplicateData;
+    public DuplicateIdempotencyIdException(IStreamStoreObject<TData> duplicateData) => DuplicateData = duplicateData;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DuplicateIdempotencyIdException{TData}" /> class.
@@ -54,5 +54,5 @@ public class DuplicateIdempotencyIdException<TData> : Exception
     /// Gets the duplicate data.
     /// </summary>
     /// <value>The duplicate data.</value>
-    public IStreamObject<TData>? DuplicateData { get; }
+    public IStreamStoreObject<TData>? DuplicateData { get; }
 }

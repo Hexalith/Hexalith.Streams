@@ -1,23 +1,24 @@
-﻿// <copyright file="IStreamResult.cs" company="ITANEO">
+﻿// <copyright file="IStreamStoreObject.cs" company="ITANEO">
 // Copyright (c) ITANEO (https://www.itaneo.com). All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Hexalith.Streams.Abstractions.Stores;
+namespace Hexalith.Streams.Stores;
 
 /// <summary>
 /// Persisted stream item interface.
 /// </summary>
 /// <typeparam name="TData">The type of the data.</typeparam>
-public interface IStreamResult<TData>
+public interface IStreamStoreObject<out TData>
 {
     /// <summary>
-    /// Gets the message.
+    /// Gets the data object.
     /// </summary>
-    IEnumerable<IStreamObject<TData>> Objects { get; }
+    /// <value>The data.</value>
+    TData Data { get; }
 
     /// <summary>
-    /// Gets the stream sequence number.
+    /// Gets the idempotency identifier used to ensure that the same data is not processed twice.
     /// </summary>
-    long Version { get; }
+    string IdempotencyId { get; }
 }

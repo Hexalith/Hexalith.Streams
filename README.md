@@ -29,13 +29,11 @@ A Hexalith library for building event-driven applications using streams.
 
 ## Repository Structure
 
-## Repository Structure
-
 The repository is organized as follows:
 
 - [src](./src/README.md) Is the source code directory where you will add your package projects.
 - [test](./test/README.md) Contains test projects for your packages.
-- [samples](./samples/README.md) Contains example implementations of your packages.
+- [examples](./examples/README.md) Contains example implementations of your packages.
 - [Hexalith.Builds](./Hexalith.Builds/README.md) Contains shared build configurations and tools.
 - [Hexalith.Commons](./Hexalith.Commons/README.md) Contains shared utility classes and extensions.
 - [Hexalith.PolymorphicSerializations](./Hexalith.PolymorphicSerializations/README.md) Contains shared polymorphic serialization classes.
