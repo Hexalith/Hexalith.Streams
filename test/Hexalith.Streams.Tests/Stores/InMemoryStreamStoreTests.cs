@@ -66,6 +66,6 @@ public class InMemoryStreamStoreTests
 
         // Assert
         _ = stream.ShouldNotBeNull();
-        _ = stream.ShouldBeOfType<IStoreStream<string>>();
+        _ = stream.ShouldBeOfType<InMemoryStream<string>>();
     }
 }

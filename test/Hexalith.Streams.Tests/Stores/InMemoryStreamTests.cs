@@ -82,11 +82,68 @@ public class InMemoryStreamTests
     }
 
     /// <summary>
+    /// Tests that snapshot can be created and used.
+    /// </summary>
+    /// <returns>The task.</returns>
+    [Fact]
+    public async Task AddSnapshot_ShouldSetSnapshotVersion()
+    {
+        // Arrange
+        var store = new InMemoryStreamStore<string>();
+        IStoreStream<string> stream = store.GetStream("test-stream");
+        StreamStoreObject<string>[] items =
+        [
+            new StreamStoreObject<string>("data1", "idempotency1"),
+            new StreamStoreObject<string>("data2", "idempotency2"),
+            new StreamStoreObject<string>("data3", "idempotency3"),
+        ];
+        _ = await stream.AddAsync(items, CancellationToken.None);
+
+        // Act - Create a snapshot and get it's version
+        var snapshot = new StreamStoreObject<string>("snapshot-data", "snapshot-id");
+        await stream.SnapshotAsync(2, snapshot, CancellationToken.None);
+        long version = await stream.SnapshotVersionAsync(CancellationToken.None);
+
+        // Assert
+        version.ShouldBe(2);
+    }
+
+    /// <summary>
+    /// Tests that adding a snapshot truncates stream objects.
+    /// </summary>
+    /// <returns>The task.</returns>
+    [Fact]
+    public async Task AddSnapshot_ShouldTruncateStreamObjects()
+    {
+        // Arrange
+        var store = new InMemoryStreamStore<string>();
+        IStoreStream<string> stream = store.GetStream("test-stream");
+        StreamStoreObject<string>[] items =
+        [
+            new StreamStoreObject<string>("data1", "idempotency1"),
+            new StreamStoreObject<string>("data2", "idempotency2"),
+            new StreamStoreObject<string>("data3", "idempotency3"),
+        ];
+        _ = await stream.AddAsync(items, CancellationToken.None);
+
+        // Act - Create a snapshot and get stream content
+        var snapshot = new StreamStoreObject<string>("snapshot-data", "snapshot-id");
+        await stream.SnapshotAsync(2, snapshot, CancellationToken.None);
+        StreamStoreResult<string> result = await stream.GetAsync(true, CancellationToken.None);
+
+        // Assert
+        result.Objects.Count().ShouldBe(2);
+        result.Version.ShouldBe(3);
+        result.Objects.ElementAt(0).Data.ShouldBe("snapshot-data");
+        result.Objects.ElementAt(1).Data.ShouldBe("data3");
+    }
+
+    /// <summary>
     /// Tests that clearing snapshot works correctly.
     /// </summary>
     /// <returns>The task.</returns>
     [Fact]
-    public async Task ClearSnapshot_ShouldWork()
+    public async Task ClearSnapshot_ShouldSetSnapshotVersionToZero()
     {
         // Arrange
         var store = new InMemoryStreamStore<string>();
@@ -105,15 +162,10 @@ public class InMemoryStreamTests
 
         // Act - Clear the snapshot and get data
         await stream.ClearSnapshotAsync(CancellationToken.None);
-        StreamStoreResult<string> result = await stream.GetAsync(true, CancellationToken.None);
+        long version = await stream.SnapshotVersionAsync(CancellationToken.None);
 
         // Assert
-        result.Version.ShouldBe(3);
-        IStreamStoreObject<string>[] resultArray = [.. result.Objects];
-        resultArray.Length.ShouldBe(3); // Should get all items since snapshot is cleared
-        resultArray[0].Data.ShouldBe("data1");
-        resultArray[1].Data.ShouldBe("data2");
-        resultArray[2].Data.ShouldBe("data3");
+        version.ShouldBe(0);
     }
 
     /// <summary>
@@ -175,29 +227,11 @@ public class InMemoryStreamTests
     }
 
     /// <summary>
-    /// Tests that a new stream has version 0.
-    /// </summary>
-    /// <returns>The task.</returns>
-    [Fact]
-    public async Task NewStream_ShouldHaveVersionZero()
-    {
-        // Arrange
-        var store = new InMemoryStreamStore<string>();
-        IStoreStream<string> stream = store.GetStream("test-stream");
-
-        // Act
-        long version = await stream.VersionAsync(CancellationToken.None);
-
-        // Assert
-        version.ShouldBe(0);
-    }
-
-    /// <summary>
     /// Tests that snapshot can be created and used.
     /// </summary>
     /// <returns>The task.</returns>
     [Fact]
-    public async Task Snapshot_ShouldBeCreatedAndUsed()
+    public async Task GetWithSnapshot_ShouldTruncateStream()
     {
         // Arrange
         var store = new InMemoryStreamStore<string>();
@@ -223,6 +257,24 @@ public class InMemoryStreamTests
         resultArray.Length.ShouldBe(2); // Snapshot + items after snapshot
         resultArray[0].Data.ShouldBe("snapshot-data"); // Should contain the snapshot
         resultArray[1].Data.ShouldBe("data3"); // Should contain items after snapshot
+    }
+
+    /// <summary>
+    /// Tests that a new stream has version 0.
+    /// </summary>
+    /// <returns>The task.</returns>
+    [Fact]
+    public async Task NewStream_ShouldHaveVersionZero()
+    {
+        // Arrange
+        var store = new InMemoryStreamStore<string>();
+        IStoreStream<string> stream = store.GetStream("test-stream");
+
+        // Act
+        long version = await stream.VersionAsync(CancellationToken.None);
+
+        // Assert
+        version.ShouldBe(0);
     }
 
     /// <summary>

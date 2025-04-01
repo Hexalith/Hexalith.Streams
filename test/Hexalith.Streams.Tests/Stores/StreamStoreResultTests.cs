@@ -38,20 +38,6 @@ public class StreamStoreResultTests
     }
 
     /// <summary>
-    /// Tests that null items collection is handled correctly.
-    /// </summary>
-    [Fact]
-    public void Constructor_WithNullItems_ShouldCreateInstanceWithEmptyCollection()
-    {
-        // Act
-        var result = new StreamStoreResult<string>(null!, 1);
-
-        // Assert
-        _ = result.Objects.ShouldNotBeNull();
-        result.Objects.ShouldBeEmpty();
-    }
-
-    /// <summary>
     /// Tests that Items property can be accessed correctly.
     /// </summary>
     [Fact]

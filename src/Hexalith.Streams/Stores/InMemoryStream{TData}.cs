@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 /// </summary>
 /// <typeparam name="TData">The type of the data in the stream.</typeparam>
 /// <param name="streamId">The stream identifier.</param>
-internal sealed class InMemoryStream<TData>(string streamId) : IStoreStream<TData>
+public sealed class InMemoryStream<TData>(string streamId) : IStoreStream<TData>
 {
     private readonly List<IStreamStoreObject<TData>> _items = [];
     private readonly Lock _lock = new();
@@ -81,44 +81,54 @@ internal sealed class InMemoryStream<TData>(string streamId) : IStoreStream<TDat
     /// <param name="useSnapshot">if set to <c>true</c> use a snapshot to avoid replaying all events.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The stream data slice.</returns>
-    public Task<IEnumerable<IStreamStoreObject<TData>>> GetAsync(long first, long last, bool useSnapshot, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IStreamStoreObject<TData>>> GetAsync(long first, long last, bool useSnapshot, CancellationToken cancellationToken)
     {
-        using (_lock.EnterScope())
+        int version = _items.Count;
+        if (first < 1)
         {
-            if (first < 0 || last < first || last >= _items.Count)
-            {
-                return Task.FromResult(Enumerable.Empty<IStreamStoreObject<TData>>());
-            }
-
-            IEnumerable<IStreamStoreObject<TData>> result;
-
-            if (useSnapshot && _snapshot != null && first <= _snapshotVersion)
-            {
-                if (_snapshotVersion >= last)
-                {
-                    // All items are covered by the snapshot
-                    result = [_snapshot];
-                }
-                else
-                {
-                    // Combine snapshot with items after the snapshot
-                    IEnumerable<IStreamStoreObject<TData>> itemsAfterSnapshot = _items
-                        .Skip((int)(_snapshotVersion + 1))
-                        .Take((int)(last - _snapshotVersion));
-
-                    result = new[] { _snapshot }.Concat(itemsAfterSnapshot);
-                }
-            }
-            else
-            {
-                // No snapshot or not using it
-                result = _items
-                    .Skip((int)first)
-                    .Take((int)(last - first + 1));
-            }
-
-            return Task.FromResult(result);
+            throw new ArgumentOutOfRangeException(nameof(first), "First item must be greater than 0");
         }
+
+        if (last < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(last), "Last item must be greater than 0");
+        }
+
+        if (last < first)
+        {
+            throw new ArgumentOutOfRangeException(nameof(last), "Last item must be greater than or equal to first item");
+        }
+
+        if (last > version)
+        {
+            throw new ArgumentOutOfRangeException(nameof(last), $"Last item must be less than or equal to the stream version {version}");
+        }
+
+        if (_snapshotVersion >= version)
+        {
+            throw new InvalidOperationException($"Stream '{streamId}' has a snapshot at version {_snapshotVersion} but the current version is {version}");
+        }
+
+        IEnumerable<IStreamStoreObject<TData>> snapshot;
+        long f = first;
+        if (useSnapshot && first <= _snapshotVersion)
+        {
+            // A snapshot is available and the requested slice is within the snapshot.
+            snapshot = [_snapshot!];
+            f = _snapshotVersion + 1;
+        }
+        else
+        {
+            snapshot = [];
+        }
+
+        IQueryable<IStreamStoreObject<TData>> items = _items.AsQueryable();
+        if (f > 1)
+        {
+            items = items.Skip((int)(f - 1));
+        }
+
+        return await Task.FromResult<IEnumerable<IStreamStoreObject<TData>>>([.. snapshot.Union(items.Take((int)(last - f + 1)))]);
     }
 
     /// <summary>
@@ -130,7 +140,7 @@ internal sealed class InMemoryStream<TData>(string streamId) : IStoreStream<TDat
     public async Task<StreamStoreResult<TData>> GetAsync(bool useSnapshot, CancellationToken cancellationToken)
     {
         int version = _items.Count;
-        IEnumerable<IStreamStoreObject<TData>> result = await GetAsync(0, version, useSnapshot, cancellationToken);
+        IEnumerable<IStreamStoreObject<TData>> result = await GetAsync(1, version, useSnapshot, cancellationToken);
         return new StreamStoreResult<TData>(result, version);
     }
 
@@ -157,6 +167,10 @@ internal sealed class InMemoryStream<TData>(string streamId) : IStoreStream<TDat
 
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc/>
+    public Task<long> SnapshotVersionAsync(CancellationToken cancellationToken)
+        => Task.FromResult(_snapshotVersion);
 
     /// <summary>
     /// Gets the stream version.

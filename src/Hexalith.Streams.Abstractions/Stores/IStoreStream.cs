@@ -63,6 +63,13 @@ public interface IStoreStream<TData>
     Task SnapshotAsync(long version, IStreamStoreObject<TData> snapshot, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Gets the stream version of the snapshot.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>Returns the snapshot version.</returns>
+    Task<long> SnapshotVersionAsync(CancellationToken cancellationToken);
+
+    /// <summary>
     /// Gets the stream version.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>

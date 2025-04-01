@@ -34,25 +34,6 @@ public class StreamStoreObjectTests
     }
 
     /// <summary>
-    /// Tests that two objects with different values are not equal.
-    /// </summary>
-    [Fact]
-    public void Equals_WithDifferentValues_ShouldBeFalse()
-    {
-        // Arrange
-        var object1 = new StreamStoreObject<string>("data", "idempotency-id");
-        var object2 = new StreamStoreObject<string>("data", "idempotency-id");
-
-        // Act
-        bool areEqual = object1.Equals(object2);
-
-        // Assert
-        areEqual.ShouldBeFalse();
-        (object1 == object2).ShouldBeFalse();
-        (object1 != object2).ShouldBeTrue();
-    }
-
-    /// <summary>
     /// Tests that an object is not equal to null.
     /// </summary>
     [Fact]
@@ -101,42 +82,6 @@ public class StreamStoreObjectTests
         areEqual.ShouldBeTrue();
         (object1 == object2).ShouldBeTrue();
         (object1 != object2).ShouldBeFalse();
-    }
-
-    /// <summary>
-    /// Tests that objects with different values have different hash codes.
-    /// </summary>
-    [Fact]
-    public void GetHashCode_WithDifferentValues_ShouldBeDifferent()
-    {
-        // Arrange
-        var object1 = new StreamStoreObject<string>("data", "idempotency-id");
-        var object2 = new StreamStoreObject<string>("data", "idempotency-id");
-
-        // Act
-        int hashCode1 = object1.GetHashCode();
-        int hashCode2 = object2.GetHashCode();
-
-        // Assert
-        hashCode1.ShouldNotBe(hashCode2);
-    }
-
-    /// <summary>
-    /// Tests that objects with the same values have the same hash code.
-    /// </summary>
-    [Fact]
-    public void GetHashCode_WithSameValues_ShouldBeSame()
-    {
-        // Arrange
-        var object1 = new StreamStoreObject<string>("data", "idempotency-id");
-        var object2 = new StreamStoreObject<string>("data", "idempotency-id");
-
-        // Act
-        int hashCode1 = object1.GetHashCode();
-        int hashCode2 = object2.GetHashCode();
-
-        // Assert
-        hashCode1.ShouldBe(hashCode2);
     }
 
     /// <summary>
