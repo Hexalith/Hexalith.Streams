@@ -11,6 +11,9 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Hexalith.Streams\Hexalith.Streams.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
