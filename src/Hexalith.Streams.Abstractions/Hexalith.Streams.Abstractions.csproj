@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(DefaultTargetFramework)</TargetFramework>
+    <PackageId>Hexalith.Streams</PackageId>
+    <Description>Hexalith Streams utilities and helpers abstractions</Description>
+    <PackageProjectUrl>https://github.com/Hexalith/Hexalith.Streams</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Hexalith/Hexalith.Streams</RepositoryUrl>
+    <PackageTags>hexalith;Streams;</PackageTags>
+  </PropertyGroup>
+</Project>

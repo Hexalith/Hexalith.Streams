@@ -1,6 +1,6 @@
 # Hexalith.Streams
 
-This is a template repository for creating new Hexalith packages. The repository provides a structured starting point for developing new packages within the Hexalith ecosystem.
+A Hexalith library for building event-driven applications using streams.
 
 ## Build Status
 
@@ -26,65 +26,30 @@ This is a template repository for creating new Hexalith packages. The repository
 
 ## Overview
 
-This repository provides a template for creating new Hexalith packages. It includes all the necessary configuration files, directory structure, and GitHub workflow configurations to ensure consistency across Hexalith packages.
 
 ## Repository Structure
 
-```text
-Hexalith.Streams/
-├── .github/             # GitHub workflows and configurations
-├── Hexalith.Builds/     # Shared build configurations (submodule)
-├── src/                 # Source code
-├── test/                # Test projects
-├── .gitignore           # Git ignore file
-├── .gitmodules          # Git submodules configuration
-├── Directory.Build.props # MSBuild properties shared across projects
-├── Directory.Packages.props # Central package management
-├── Hexalith.Streams.sln # Solution file
-├── LICENSE              # MIT License
-├── README.md            # This file
-└── initialize.ps1       # Initialization script
-```
+## Repository Structure
+
+The repository is organized as follows:
+
+- [src](./src/README.md) Is the source code directory where you will add your package projects.
+- [test](./test/README.md) Contains test projects for your packages.
+- [samples](./samples/README.md) Contains example implementations of your packages.
+- [Hexalith.Builds](./Hexalith.Builds/README.md) Contains shared build configurations and tools.
+- [Hexalith.Commons](./Hexalith.Commons/README.md) Contains shared utility classes and extensions.
+- [Hexalith.PolymorphicSerializations](./Hexalith.PolymorphicSerializations/README.md) Contains shared polymorphic serialization classes.
 
 ## Getting Started
 
 ### Prerequisites
 
+- [Hexalith.Builds](https://github.com/Hexalith/Hexalith.Builds)
+- [Hexalith.Commons](https://github.com/Hexalith/Hexalith.Commons)
+- [Hexalith.PolymorphicSerializations](https://github.com/Hexalith/Hexalith.PolymorphicSerializations)
 - [.NET 8 SDK](https://dotnet.microsoft.com/download) or later
 - [PowerShell 7](https://github.com/PowerShell/PowerShell) or later
 - [Git](https://git-scm.com/)
-
-### Initializing the Package
-
-To use this template to create a new Hexalith package:
-
-1. Clone this repository or use it as a template when creating a new repository on GitHub.
-2. Run the initialization script with your desired package name:
-
-```powershell
-./initialize.ps1 -PackageName "YourPackageName"
-```
-
-This script will:
-
-- Replace all occurrences of "Streams" with your package name
-- Replace all occurrences of "Streams" with the lowercase version of your package name
-- Rename directories and files that contain "Streams" in their name
-- Initialize and update Git submodules
-- Set up the project structure for your new package
-
-### Git Submodules
-
-This template uses the Hexalith.Builds repository as a Git submodule. For information about the build system and configuration, refer to the README files in the Hexalith.Builds directory.
-
-## Development
-
-After initializing your package, you can start developing by:
-
-1. Opening the solution file in your preferred IDE
-2. Adding your implementation to the src/ directory
-3. Writing tests in the test/ directory
-4. Building and testing your package
 
 ## License
 
