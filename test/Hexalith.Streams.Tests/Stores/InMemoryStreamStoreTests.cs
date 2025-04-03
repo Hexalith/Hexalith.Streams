@@ -10,7 +10,7 @@ using Hexalith.Streams.Stores;
 using Shouldly;
 
 /// <summary>
-/// Tests for <see cref="InMemoryStreamStore{TData}"/>.
+/// Tests for <see cref="InMemoryStreamStoreProvider{TData}"/>.
 /// </summary>
 public class InMemoryStreamStoreTests
 {
@@ -21,7 +21,7 @@ public class InMemoryStreamStoreTests
     public void GetStream_ShouldReturnDifferentInstancesForDifferentIds()
     {
         // Arrange
-        var streamStore = new InMemoryStreamStore<string>();
+        var streamStore = new InMemoryStreamStoreProvider<string>();
         const string streamId1 = "test-stream-1";
         const string streamId2 = "test-stream-2";
 
@@ -40,7 +40,7 @@ public class InMemoryStreamStoreTests
     public void GetStream_ShouldReturnSameInstanceForSameId()
     {
         // Arrange
-        var streamStore = new InMemoryStreamStore<string>();
+        var streamStore = new InMemoryStreamStoreProvider<string>();
         const string streamId = "test-stream";
 
         // Act
@@ -58,7 +58,7 @@ public class InMemoryStreamStoreTests
     public void GetStream_ShouldReturnValidStream()
     {
         // Arrange
-        var streamStore = new InMemoryStreamStore<string>();
+        var streamStore = new InMemoryStreamStoreProvider<string>();
         const string streamId = "test-stream";
 
         // Act
@@ -66,6 +66,6 @@ public class InMemoryStreamStoreTests
 
         // Assert
         _ = stream.ShouldNotBeNull();
-        _ = stream.ShouldBeOfType<InMemoryStream<string>>();
+        _ = stream.ShouldBeOfType<StoreStream<string>>();
     }
 }

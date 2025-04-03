@@ -10,7 +10,7 @@ using Hexalith.Streams.Stores;
 using Shouldly;
 
 /// <summary>
-/// Tests for <see cref="InMemoryStream{TData}"/> accessed through <see cref="IStoreStream{TData}"/> interface.
+/// Tests for <see cref="StoreStream{TData}"/> accessed through <see cref="IStoreStream{TData}"/> interface.
 /// </summary>
 public class InMemoryStreamTests
 {
@@ -22,12 +22,12 @@ public class InMemoryStreamTests
     public async Task AddItems_ShouldIncreaseVersion()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
-            new StreamStoreObject<string>("data1", "idempotency1"),
-            new StreamStoreObject<string>("data2", "idempotency2"),
+            new StreamStoreObject<string>("data1", 1, "idempotency1"),
+            new StreamStoreObject<string>("data2", 2, "idempotency2"),
         ];
 
         // Act
@@ -47,7 +47,7 @@ public class InMemoryStreamTests
     public async Task AddItemsWithExpectedVersion_ShouldSucceedWhenVersionMatches()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -69,7 +69,7 @@ public class InMemoryStreamTests
     public async Task AddItemsWithExpectedVersion_ShouldThrowWhenVersionDoesntMatch()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -89,7 +89,7 @@ public class InMemoryStreamTests
     public async Task AddSnapshot_ShouldSetSnapshotVersion()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -116,7 +116,7 @@ public class InMemoryStreamTests
     public async Task AddSnapshot_ShouldTruncateStreamObjects()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -146,7 +146,7 @@ public class InMemoryStreamTests
     public async Task ClearSnapshot_ShouldSetSnapshotVersionToZero()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -176,7 +176,7 @@ public class InMemoryStreamTests
     public async Task GetItems_ShouldReturnCorrectData()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -205,7 +205,7 @@ public class InMemoryStreamTests
     public async Task GetItemsSlice_ShouldReturnCorrectData()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -234,7 +234,7 @@ public class InMemoryStreamTests
     public async Task GetWithSnapshot_ShouldTruncateStream()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
@@ -267,7 +267,7 @@ public class InMemoryStreamTests
     public async Task NewStream_ShouldHaveVersionZero()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
 
         // Act
@@ -285,7 +285,7 @@ public class InMemoryStreamTests
     public async Task SnapshotWithInvalidVersion_ShouldThrow()
     {
         // Arrange
-        var store = new InMemoryStreamStore<string>();
+        var store = new InMemoryStreamStoreProvider<string>();
         IStoreStream<string> stream = store.GetStream("test-stream");
         StreamStoreObject<string>[] items =
         [
